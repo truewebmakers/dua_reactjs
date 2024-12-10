@@ -1,5 +1,5 @@
-import React, { useState , useNavigate } from 'react';
-import { Link } from 'react-router-dom'; 
+import React, { useState } from 'react';
+import { Link , useNavigate } from 'react-router-dom'; 
 import notification from '../../../services/toastService';
 
 
@@ -8,16 +8,13 @@ const Sidebar = () => {
   // State to track whether the submenu is open or not
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
-
+  const navigate = useNavigate();
   
-  const logout = () => {
-    // Remove the auth token and user info from localStorage
+  const logout = () => { 
     localStorage.removeItem('authToken');
-    localStorage.removeItem('authInfo');
-    // Show a notification that the user has logged out (optional)
-    notification('You have been logged out successfully!', 'success');
-    // Redirect the user to the login page
-    const navigate = useNavigate();
+    localStorage.removeItem('authInfo'); 
+    notification('You have been logged out successfully!', 'success'); 
+    
     navigate('/auth/login');
   };
 
