@@ -25,6 +25,7 @@ function App() {
     },
     {
       path: "/admin/",
+      
       element: <AppLayoutAdmin/>,
       children: [  
         { path: "dashboard", element: <Dashboard/> },

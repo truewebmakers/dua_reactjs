@@ -7,10 +7,13 @@ import Sidebar from './Sidebar';
 const AppLayoutAdmin = () => {
   return (
     <>
-        <Header/>
+      <div id="app">
+      <Header/>
         <Sidebar/>
            <Outlet/>
          <Footer/>
+      </div>
+        
     </>
     
   );

@@ -16,18 +16,24 @@ function Login(props) {
         password: password,
       })
       .then(function (res) {
-        console.log("res", );
-        const token = res.data.token; 
-        const userInfo = res.data.userInfo; 
-        localStorage.setItem('authToken', token)
-        localStorage.setItem('authInfo', userInfo)
-        notification(err.response.data.message, "success");
-        setIsLoading(false); 
-        navigate('/admin/login')
+        if (res.data && res.data.token && res.data.userInfo) { 
+          console.log("res", res.data);
+          const token = res.data.token; 
+          const userInfo = res.data.userInfo; 
+          localStorage.setItem('authToken', token)
+          localStorage.setItem('authInfo', userInfo)
+          notification(res.data.message, "success");
+          setIsLoading(false); 
+          navigate('/admin/dashboard')
+        }
+        
       })
       .catch(function (err) {
-        notification(err.response.data.message, "error"); 
+        if (err.response) { 
+          notification(err.response.data.message, "error"); 
         setIsLoading(false); 
+        }
+        
       });
   };
 

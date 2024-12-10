@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState , useNavigate } from 'react';
+import { Link } from 'react-router-dom'; 
+import notification from '../../../services/toastService';
+
+
+
 const Sidebar = () => {
   // State to track whether the submenu is open or not
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
 
-  // Function to toggle the menu visibility
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  
+  const logout = () => {
+    // Remove the auth token and user info from localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authInfo');
+    // Show a notification that the user has logged out (optional)
+    notification('You have been logged out successfully!', 'success');
+    // Redirect the user to the login page
+    const navigate = useNavigate();
+    navigate('/auth/login');
   };
 
-  const toggleSubmenu = (index) => {
+
+ 
+  const toggleSubmenu = (index) => { 
     setOpenSubmenu(openSubmenu === index ? null : index); // Toggle the submenu
   };
   const SideBarUrl = [
@@ -38,6 +51,7 @@ const Sidebar = () => {
       ]
 
     },
+    
        
   ];
 
@@ -49,9 +63,9 @@ const Sidebar = () => {
           <span>{item.label}</span>
         </Link>
 
-        {/* Render child items if exists and is open */}
-        {item.child && openSubmenu === index && (
-          <ul className="submenu">
+        {/* Render submenu if item has children and is open */}
+        {item.child && (
+          <ul className={`submenu ${openSubmenu === index ? 'active' : ''}`}>
             {item.child.map((child, childIndex) => (
               <li key={childIndex} className="submenu-item">
                 <Link to={child.href}>{child.label}</Link>
@@ -62,6 +76,29 @@ const Sidebar = () => {
       </li>
     ));
   };
+
+
+  // const renderSidebarItems = (items) => {
+  //   return items.map((item, index) => (
+  //     <li key={index} className={`sidebar-item ${item.child ? 'has-sub' : ''}`}>
+  //       <Link to={item.href} className="sidebar-link" onClick={() => item.child && toggleSubmenu(index)}>
+  //         <i className={item.icon}></i>
+  //         <span>{item.label}</span>
+  //       </Link>
+
+  //       {/* Render child items if exists and is open */}
+  //       {item.child && openSubmenu === index && (
+  //         <ul className="submenu">
+  //           {item.child.map((child, childIndex) => (
+  //             <li key={childIndex} className="submenu-item">
+  //               <Link to={child.href}>{child.label}</Link>
+  //             </li>
+  //           ))}
+  //         </ul>
+  //       )}
+  //     </li>
+  //   ));
+  // };
 
   return (
     <div id="sidebar" className="active">
@@ -81,6 +118,13 @@ const Sidebar = () => {
         <ul className="menu">
           {/* Render the dynamic menu */}
           {renderSidebarItems(SideBarUrl)} 
+          <li className="sidebar-item"  onClick={logout}>
+            <Link  onClick={(e)=>logout()}  className="sidebar-link">
+            <i className="bi bi-grid-fill" />
+            <span>Logout</span>
+            </Link>
+               
+            </li>
         </ul>
       </div>
 
