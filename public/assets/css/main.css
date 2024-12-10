@@ -1,0 +1,20 @@
+.auth-logo {
+  text-align: center;
+}
+#auth #auth-left .auth-logo {
+  margin-bottom: 2rem;
+}
+h1.auth-title {
+  text-align: center;
+}
+
+#auth #auth-left .auth-subtitle {
+  font-size: 1rem;
+  line-height: 2.5rem;
+  color: #a8aebb;
+  text-align: center;
+}
+
+#auth #auth-left {
+  padding: 2rem 3rem;
+}
