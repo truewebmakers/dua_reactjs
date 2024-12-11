@@ -18,3 +18,7 @@ h1.auth-title {
 #auth #auth-left {
   padding: 2rem 3rem;
 }
+
+.auth-logo img {
+  height: 90px;
+}

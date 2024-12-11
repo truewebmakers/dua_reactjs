@@ -4,9 +4,7 @@ import notification from '../../../services/toastService';
 
 
 
-const Sidebar = () => {
-  // State to track whether the submenu is open or not
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Sidebar = () => { 
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const navigate = useNavigate();
   
@@ -14,12 +12,8 @@ const Sidebar = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('authInfo'); 
     notification('You have been logged out successfully!', 'success'); 
-    
     navigate('/auth/login');
   };
-
-
- 
   const toggleSubmenu = (index) => { 
     setOpenSubmenu(openSubmenu === index ? null : index); // Toggle the submenu
   };
@@ -74,36 +68,15 @@ const Sidebar = () => {
     ));
   };
 
-
-  // const renderSidebarItems = (items) => {
-  //   return items.map((item, index) => (
-  //     <li key={index} className={`sidebar-item ${item.child ? 'has-sub' : ''}`}>
-  //       <Link to={item.href} className="sidebar-link" onClick={() => item.child && toggleSubmenu(index)}>
-  //         <i className={item.icon}></i>
-  //         <span>{item.label}</span>
-  //       </Link>
-
-  //       {/* Render child items if exists and is open */}
-  //       {item.child && openSubmenu === index && (
-  //         <ul className="submenu">
-  //           {item.child.map((child, childIndex) => (
-  //             <li key={childIndex} className="submenu-item">
-  //               <Link to={child.href}>{child.label}</Link>
-  //             </li>
-  //           ))}
-  //         </ul>
-  //       )}
-  //     </li>
-  //   ));
-  // };
+ 
 
   return (
     <div id="sidebar" className="active">
     <div className="sidebar-wrapper active">
       <div className="sidebar-header">
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           <div className="logo">
-            <a href="#"><img src="../../../assets/images/logo/logo.png" alt="Logo" /></a>
+            <a href="#"><img src="../../../assets/logo.png" alt="Logo" /></a>
           </div>
           <div className="toggler">
             <a href="#" className="sidebar-hide d-xl-none d-block"><i className="bi bi-x bi-middle" /></a>

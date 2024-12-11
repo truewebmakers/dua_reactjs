@@ -22,7 +22,7 @@ function Login(props) {
           const userInfo = res.data.userInfo; 
           localStorage.setItem('authToken', token)
           localStorage.setItem('authInfo', userInfo)
-          notification(res.data.message, "success");
+          notification(res.message, "success");
           setIsLoading(false); 
           navigate('/admin/dashboard')
         }
@@ -46,7 +46,7 @@ function Login(props) {
           <div id="auth-left">
             <div className="auth-logo"> 
               <Link to={"/auth/login"}>
-                <img src="../assets/images/logo/logo.png" alt="Logo" />
+                <img src="../assets/logo.png" alt="Logo" />
               </Link>
             </div>
             <h1 className="auth-title"> Log in.</h1>
