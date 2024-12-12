@@ -5,6 +5,12 @@ import Dashboard from './Components/admin/Dashboard'
 import AppLayout from './Components/layouts/Guest/AppLayout'
 import LandingPage from './Components/LandingPage'
 import AppLayoutAdmin from './Components/layouts/Main/AppLayoutAdmin'
+import CreatePermission from './Components/admin/usermanagement/CreatePermission'
+import ManagePermission from './Components/admin/usermanagement/ManagePermission'
+import CreateRole from './Components/admin/usermanagement/CreateRole'
+import ManageRole from './Components/admin/usermanagement/ManageRole'
+import CreateUser from './Components/admin/usermanagement/CreateUser'
+import ManageUserList from './Components/admin/usermanagement/ManageUserList'
 
 
 
@@ -29,6 +35,13 @@ function App() {
       element: <AppLayoutAdmin/>,
       children: [  
         { path: "dashboard", element: <Dashboard/> },
+        { path: "permission/create", element: <CreatePermission/> },
+        { path: "permission/list", element: <ManagePermission/> },
+        { path: "role/create", element: <CreateRole/> },
+        { path: "role/list", element: <ManageRole/> },
+        { path: "users/create", element: <CreateUser/> },
+        { path: "users/list", element: <ManageUserList/> },
+
       ],
     },
   ];

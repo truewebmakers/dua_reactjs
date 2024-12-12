@@ -1,7 +1,7 @@
 import axios from 'axios';
  
 const axiosInstance = axios.create({
-  baseURL: 'https://webapp.hyperiontech.com.au/speakmydialect/api/', 
+  baseURL: 'https://dev.kahayfaqeer.org/api/', 
 });
  
 const token = localStorage.getItem('authToken');

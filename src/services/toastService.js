@@ -23,6 +23,7 @@ const notification = (message, type = "success") => {
   } else if (type === "info") {
     toast.info(message, config);
   } else {
+    console.log("ms",message)
     toast.error(message, config);
   }
 };

@@ -11,13 +11,13 @@ function Login(props) {
 
   const handleSubmit = async (e) => {
     setIsLoading(true);  
-    axiosInstance.post("/login", {
+    axiosInstance.post("login", {
         email: username,
         password: password,
       })
       .then(function (res) {
         if (res.data && res.data.token && res.data.userInfo) { 
-          console.log("res", res.data);
+          // console.log("res", res.data);
           const token = res.data.token; 
           const userInfo = res.data.userInfo; 
           localStorage.setItem('authToken', token)
@@ -30,8 +30,24 @@ function Login(props) {
       })
       .catch(function (err) {
         if (err.response) { 
-          notification(err.response.data.message, "error"); 
-        setIsLoading(false); 
+          setIsLoading(false); 
+          let errors = err.response.data.error;  
+          if (typeof errors === "object" && errors !== null) {
+            Object.entries(errors).forEach(([field, messages]) => {
+         
+              messages.forEach((message) => {
+                notification(message, "error"); 
+                  console.log(`Error: ${message}`);
+              });
+          });
+          }else{
+            console.log("errors",errors)
+            notification(errors, "error"); 
+          }
+          
+         
+         
+          
         }
         
       });
