@@ -29,25 +29,10 @@ function Login(props) {
         
       })
       .catch(function (err) {
-        if (err.response) { 
-          setIsLoading(false); 
-          let errors = err.response.data.error;  
-          if (typeof errors === "object" && errors !== null) {
-            Object.entries(errors).forEach(([field, messages]) => {
-         
-              messages.forEach((message) => {
-                notification(message, "error"); 
-                  console.log(`Error: ${message}`);
-              });
-          });
-          }else{
-            console.log("errors",errors)
-            notification(errors, "error"); 
-          }
-          
-         
-         
-          
+        setIsLoading(false); 
+        let errors = err.response.data;  
+        if (err) { 
+          notification(errors.message, "error");  
         }
         
       });

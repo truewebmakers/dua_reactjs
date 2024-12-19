@@ -58,6 +58,24 @@ const Sidebar = () => {
         },
       ],
     },
+    {
+      label: "Venue Management",
+      icon: "bi bi-grid-fill",
+      // href: "/admin/page1",
+      child: [
+        {
+          label: "Add Venue ",
+          icon: "bi bi-grid-fill",
+          href: "venue/create",
+        },
+        {
+          label: "List Venue",
+          icon: "bi bi-grid-fill",
+          href: "venue/list",
+        },
+        
+      ],
+    },
   ];
 
   const renderSidebarItems = (items) => {
