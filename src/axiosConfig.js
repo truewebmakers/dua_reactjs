@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
 });
  
 const token = localStorage.getItem('authToken');
- 
+//  console.log("token",token)
 if (token) { 
   axiosInstance.defaults.headers['Content-Type'] = 'application/json';
   axiosInstance.defaults.headers['Accept'] = 'application/json';

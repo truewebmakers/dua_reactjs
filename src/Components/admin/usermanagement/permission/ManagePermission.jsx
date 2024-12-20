@@ -4,8 +4,8 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../axiosConfig"; // Replace with your axios config
-import notification from "../../../services/toastService"; // For notifications
+import axiosInstance from "../../../../axiosConfig"; // Replace with your axios config
+import notification from "../../../../services/toastService"; // For notifications
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 
@@ -16,6 +16,9 @@ import "primeicons/primeicons.css"; // Icon CSS
  
 const ManagePermission = () => {
   const [permissions, setPermissions] = useState([]);
+  const [filters, setFilters] = useState([]);
+  const [header, setHeader] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -37,13 +40,16 @@ const ManagePermission = () => {
   // Handle delete permission
   const handleDelete = (permissionId) => {
     if (window.confirm("Are you sure you want to delete this permission?")) {
+      setLoading(true)
       axiosInstance
         .post(`/permission/delete/${permissionId}`)
         .then((response) => {
+          setLoading(false)
           setPermissions(permissions.filter((permission) => permission.id !== permissionId));
           notification(response.data.message || "Permission deleted successfully!", "success");
         })
         .catch((error) => {
+          setLoading(false)
           notification("Error deleting permission", "error");
         });
     }
@@ -61,11 +67,11 @@ const ManagePermission = () => {
 
   return (
     <div id="main">
-      <header className="mb-3">
+      {/* <header className="mb-3">
         <a href="#" className="burger-btn d-block d-xl-none">
           <i className="bi bi-justify fs-3" />
         </a>
-      </header>
+      </header> */}
       <div className="page-heading">
         <div className="page-title">
           <div className="row">
@@ -90,35 +96,33 @@ const ManagePermission = () => {
 
         <section className="section">
           <div className="card">
-            <div className="card-header d-flex justify-content-between align-items-center">
+            <div className="card-header  ">
               <h5>Manage Permissions</h5>
+              <button className="btn btn-primary float-end " onClick={(e) => navigate('/admin/permission/create')}>Add Permission</button>
               <div className="p-inputgroup">
-                <InputText
+                {/* <InputText
                   type="search"
                   value={searchTerm}
                   onChange={handleSearchChange}
                   placeholder="Search Permissions"
                   className="w-full"
-                />
+                /> */}
+             
               </div>
             </div>
             <div className="card-body">
               {loading ? (
                 <div className="d-flex justify-content-center align-items-center">
-               <ProgressSpinner aria-label="Loading" />
+               <ProgressSpinner  style={{width: '30px', height: '30px'}} aria-label="Loading" />
 
                 </div>
               ) : (
-                <DataTable
-                  value={permissions.filter((permission) =>
-                    permission.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )}
-                  paginator
-                  rows={10}
-                  rowsPerPageOptions={[5, 10, 25]}
-                  emptyMessage="No permissions found."
-                >
-                  <Column field="name" header="Permission Name" sortable filter />
+
+                <DataTable value={permissions.filter((permission) =>
+                  permission.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row" loading={loading}
+                      globalFilterFields={['name' ]} header={header} emptyMessage="No permission found.">
+                  <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: '12rem' }} />
                   <Column
                     header="Actions"
                     body={(rowData) => (
@@ -130,7 +134,7 @@ const ManagePermission = () => {
                           onClick={() => handleEdit(rowData.id)}
                         />
                         <Button
-                          label="Delete"
+                          label={(loading) ? 'Deleting...' : 'Delete'}
                           icon="pi pi-trash"
                           className="p-button-rounded p-button-danger"
                           onClick={() => handleDelete(rowData.id)}
@@ -138,7 +142,9 @@ const ManagePermission = () => {
                       </div>
                     )}
                   />
-                </DataTable>
+              </DataTable>
+
+                
               )}
             </div>
           </div>

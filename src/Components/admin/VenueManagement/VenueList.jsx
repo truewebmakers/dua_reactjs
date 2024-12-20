@@ -1,297 +1,219 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import Breadcrumb from "../../Breadcrumb";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../axiosConfig"; // Replace with your axios config
+import notification from "../../../services/toastService"; // For notifications
+import { ProgressSpinner } from "primereact/progressspinner";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // Theme CSS
+import "primereact/resources/primereact.min.css"; // Core CSS
+import "primeicons/primeicons.css"; // Icon CSS
 
 const VenueList = () => {
+  const [permissions, setPermissions] = useState([]);
+  const [filters, setFilters] = useState({
+    status: { value: null },
+    venue_id: { value: null },
+    city: { value: null },
+    siteadmin_id: { value: null },
+    address: { value: null },
+    venue_date: { value: null }
+  });
+  const [header, setHeader] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const navigate = useNavigate();
+
+  // Fetch permissions on component mount
+  useEffect(() => {
+    axiosInstance
+      .get("/venue/getall") // Replace with the correct API endpoint
+      .then((response) => {
+        setPermissions(response.data.data); // Assuming data is in 'data'
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching permissions:", error);
+        setLoading(false);
+      });
+  }, []);
+
+  // Handle delete permission
+  const handleDelete = (permissionId) => {
+    if (window.confirm("Are you sure you want to delete this permission?")) {
+      setLoading(true);
+      axiosInstance
+        .post(`/venue/delete/${permissionId}`)
+        .then((response) => {
+          setLoading(false);
+          setPermissions(
+            permissions.filter((permission) => permission.id !== permissionId)
+          );
+          notification(
+            response.data.message || "Permission deleted successfully!",
+            "success"
+          );
+        })
+        .catch((error) => {
+          setLoading(false);
+          notification("Error deleting permission", "error");
+        });
+    }
+  };
+
+  // Handle edit permission
+  const handleEdit = (permissionId) => {
+    navigate(`/venue/permission/edit/${permissionId}`);
+  };
+
+  // Handle search term change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Update search term
+  };
+
+  // Custom header for the DataTable with search input
+  const renderHeader = () => {
+    return (
+      <div className="table-header">
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="p-inputtext p-component"
+            placeholder="Global Search"
+          />
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div id="main">
-    <header className="mb-3">
-      <a href="#" className="burger-btn d-block d-xl-none">
-        <i className="bi bi-justify fs-3" />
-      </a>
-    </header>
-    <div className="page-heading">
-      <div className="page-title">
-        <div className="row">
-          <div className="col-12 col-md-6 order-md-1 order-last">
-            <h3>DataTable</h3>
-            <p className="text-subtitle text-muted">
-              For user to check they list
-            </p>
-          </div>
-          <div className="col-12 col-md-6 order-md-2 order-first">
-            <nav
-              aria-label="breadcrumb"
-              className="breadcrumb-header float-start float-lg-end"
-            >
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <a href="index.html">Dashboard</a>
-                </li>
-                <li className="breadcrumb-item active" aria-current="page">
-                  DataTable
-                </li>
-              </ol>
-            </nav>
+      <header className="mb-3">
+        <a href="#" className="burger-btn d-block d-xl-none">
+          <i className="bi bi-justify fs-3" />
+        </a>
+      </header>
+      <div className="page-heading">
+        <div className="page-title">
+          <div className="row">
+            <div className="col-12 col-md-6 order-md-1 order-last">
+              <h3>Venue List</h3>
+              <p className="text-subtitle text-muted">
+                For user to check their venue list
+              </p>
+            </div>
+            <div className="col-12 col-md-6 order-md-2 order-first">
+              <nav
+                aria-label="breadcrumb"
+                className="breadcrumb-header float-start float-lg-end"
+              >
+                <ol className="breadcrumb">
+                  <li className="breadcrumb-item">
+                    <a href="index.html">Dashboard</a>
+                  </li>
+                  <li className="breadcrumb-item active" aria-current="page">
+                    Venue List
+                  </li>
+                </ol>
+              </nav>
+            </div>
           </div>
         </div>
-      </div>
-      <section className="section">
-        <div className="card">
-          <div className="card-header">Simple Datatable</div>
+        <section className="section">
           <div className="card-body">
-            <table className="table table-striped" id="table1">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>City</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Graiden</td>
-                  <td>vehicula.aliquet@semconsequat.co.uk</td>
-                  <td>076 4820 8838</td>
-                  <td>Offenburg</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Dale</td>
-                  <td>fringilla.euismod.enim@quam.ca</td>
-                  <td>0500 527693</td>
-                  <td>New Quay</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Nathaniel</td>
-                  <td>mi.Duis@diam.edu</td>
-                  <td>(012165) 76278</td>
-                  <td>Grumo Appula</td>
-                  <td>
-                    <span className="badge bg-danger">Inactive</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Darius</td>
-                  <td>velit@nec.com</td>
-                  <td>0309 690 7871</td>
-                  <td>Ways</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Oleg</td>
-                  <td>rhoncus.id@Aliquamauctorvelit.net</td>
-                  <td>0500 441046</td>
-                  <td>Rossignol</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Kermit</td>
-                  <td>diam.Sed.diam@anteVivamusnon.org</td>
-                  <td>(01653) 27844</td>
-                  <td>Patna</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Jermaine</td>
-                  <td>sodales@nuncsit.org</td>
-                  <td>0800 528324</td>
-                  <td>Mold</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Ferdinand</td>
-                  <td>gravida.molestie@tinciduntadipiscing.org</td>
-                  <td>(016977) 4107</td>
-                  <td>Marlborough</td>
-                  <td>
-                    <span className="badge bg-danger">Inactive</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Kuame</td>
-                  <td>Quisque.purus@mauris.org</td>
-                  <td>(0151) 561 8896</td>
-                  <td>Tresigallo</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Deacon</td>
-                  <td>Duis.a.mi@sociisnatoquepenatibus.com</td>
-                  <td>07740 599321</td>
-                  <td>Karapınar</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Channing</td>
-                  <td>tempor.bibendum.Donec@ornarelectusante.ca</td>
-                  <td>0845 46 49</td>
-                  <td>Warrnambool</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Aladdin</td>
-                  <td>sem.ut@pellentesqueafacilisis.ca</td>
-                  <td>0800 1111</td>
-                  <td>Bothey</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Cruz</td>
-                  <td>non@quisturpisvitae.ca</td>
-                  <td>07624 944915</td>
-                  <td>Shikarpur</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Keegan</td>
-                  <td>molestie.dapibus@condimentumDonecat.edu</td>
-                  <td>0800 200103</td>
-                  <td>Assen</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Ray</td>
-                  <td>placerat.eget@sagittislobortis.edu</td>
-                  <td>(0112) 896 6829</td>
-                  <td>Hofors</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Maxwell</td>
-                  <td>diam@dapibus.org</td>
-                  <td>0334 836 4028</td>
-                  <td>Thane</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Carter</td>
-                  <td>urna.justo.faucibus@orci.com</td>
-                  <td>07079 826350</td>
-                  <td>Biez</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Stone</td>
-                  <td>velit.Aliquam.nisl@sitametrisus.com</td>
-                  <td>0800 1111</td>
-                  <td>Olivar</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Berk</td>
-                  <td>fringilla.porttitor.vulputate@taciti.edu</td>
-                  <td>(0101) 043 2822</td>
-                  <td>Sanquhar</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Philip</td>
-                  <td>turpis@euenimEtiam.org</td>
-                  <td>0500 571108</td>
-                  <td>Okara</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Kibo</td>
-                  <td>feugiat@urnajustofaucibus.co.uk</td>
-                  <td>07624 682306</td>
-                  <td>La Cisterna</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Bruno</td>
-                  <td>elit.Etiam.laoreet@luctuslobortisClass.edu</td>
-                  <td>07624 869434</td>
-                  <td>Rocca d"Arce</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Leonard</td>
-                  <td>blandit.enim.consequat@mollislectuspede.net</td>
-                  <td>0800 1111</td>
-                  <td>Lobbes</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Hamilton</td>
-                  <td>mauris@diam.org</td>
-                  <td>0800 256 8788</td>
-                  <td>Sanzeno</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Harding</td>
-                  <td>Lorem.ipsum.dolor@etnetuset.com</td>
-                  <td>0800 1111</td>
-                  <td>Obaix</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Emmanuel</td>
-                  <td>eget.lacus.Mauris@feugiatSednec.org</td>
-                  <td>(016977) 8208</td>
-                  <td>Saint-Remy-Geest</td>
-                  <td>
-                    <span className="badge bg-success">Active</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {loading ? (
+              <div className="d-flex justify-content-center align-items-center">
+                <ProgressSpinner
+                  style={{ width: "30px", height: "30px" }}
+                  aria-label="Loading"
+                />
+              </div>
+            ) : (
+
+              <DataTable 
+              value={permissions} 
+              paginator rows={10} 
+              dataKey="id"
+              filters={filters} 
+              filterDisplay="row" 
+              loading={loading}
+              globalFilterFields={['status', 'venue_id', 'city', 'siteadmin_id' ,'address','venue_date']} 
+              header={header} emptyMessage="No customers found.">
+ 
+                <Column
+                  field="status"
+                  filterField="status"
+                  header="Status"
+                  filter
+                  filterPlaceholder="Search by status"
+                  style={{ minWidth: "18rem" }}
+                />
+                <Column
+                  field="venue_id"
+                  header="Country Name"
+                  filter
+                  filterPlaceholder="Search by Country"
+                  style={{ minWidth: "18rem" }}
+                />
+                <Column
+                  field="city"
+                  header="City"
+                  filter
+                  filterPlaceholder="Search by City"
+                  style={{ minWidth: "12rem" }}
+                />
+                <Column
+                  field="siteadmin_id"
+                  header="Site Admin"
+                  filter
+                  filterPlaceholder="Search by Admin"
+                  style={{ minWidth: "12rem" }}
+                />
+                <Column
+                  field="address"
+                  header="Address"
+                  filter
+                  filterPlaceholder="Search by Address"
+                  style={{ minWidth: "16rem" }}
+                />
+                <Column
+                  field="venue_date"
+                  header="Venue Detail"
+                  filter
+                  filterPlaceholder="Search by Venue Date"
+                  style={{ minWidth: "12rem" }}
+                />
+                <Column
+                  header="Actions"
+                  body={(rowData) => (
+                    <div className="d-flex gap-2">
+                      <Button
+                        label="Edit"
+                        icon="pi pi-pencil"
+                        className="p-button-rounded p-button-warning"
+                        onClick={() => handleEdit(rowData.id)}
+                      />
+                      <Button
+                        label={loading ? "Deleting..." : "Delete"}
+                        icon="pi pi-trash"
+                        className="p-button-rounded p-button-danger"
+                        onClick={() => handleDelete(rowData.id)}
+                      />
+                    </div>
+                  )}
+                />
+              </DataTable>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
-  </div>
   );
-}
+};
 
 export default VenueList;
